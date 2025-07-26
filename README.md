@@ -292,6 +292,11 @@ if sky then
     sky.StarCount = 0
 end end)
 
+local Tab = Window:NewTab("FPS Booster")
+local Section = Tab:NewSection("FPS Booster")
+
+Section:NewButton("Remove Texture", "remove texture", function() for i,v in next, (workspace:GetDescendants()) do if v:IsA("Part") then v.Material = Enum.Material.SmoothPlastic end end end)
+
 local Tab = Window:NewTab("Aimbot") local Section = Tab:NewSection("Aimbot")
 
 Section:NewButton("Aimbot (serve para a mira grudar no sobrevivente)", "aimbot (serve para a mira grudar no sobrevivente)", function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Camlock-mobile-da-hood-20401"))() end)
