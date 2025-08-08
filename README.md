@@ -232,26 +232,6 @@ if sky then
     sky.StarCount = 0
 end end)
 
-Section:NewButton("Fog Preto", "fog preto", function() local lighting = game:GetService("Lighting")
-
-local atmosphere = lighting:FindFirstChildOfClass("Atmosphere")
-
-if atmosphere then
-    atmosphere.Color = Color3.fromRGB(0, 0, 0) -- Preto
-    atmosphere.Glare = 0
-    atmosphere.Haze = 10
-    atmosphere.Decay = Color3.fromRGB(0, 0, 0) -- Preto
-    atmosphere.Density = 0.85
-    atmosphere.Offset = 0
-end
-
-local sky = lighting:FindFirstChildOfClass("Sky")
-
-if sky then
-    sky.MoonAngularSize = 10
-    sky.StarCount = 0
-end end)
-
 Section:NewButton("Remove Fog (precisa de calibrador)", "remove fog (precisa de calibrador)", function() local lighting = game:GetService("Lighting")
 
 local atmosphere = lighting:FindFirstChildOfClass("Atmosphere")
@@ -292,10 +272,25 @@ if sky then
     sky.StarCount = 0
 end end)
 
-local Tab = Window:NewTab("FPS Booster")
-local Section = Tab:NewSection("FPS Booster")
+local Tab = Window:NewTab("Textura")
+local Section = Tab:NewSection("Textura")
 
-Section:NewButton("Remove Texture", "remove texture", function() for i,v in next, (workspace:GetDescendants()) do if v:IsA("Part") then v.Material = Enum.Material.SmoothPlastic end end end)
+Section:NewButton("Remover Textura", "remover textura", function() for i,v in next, (workspace:GetDescendants()) do if v:IsA("Part") then v.Material = Enum.Material.SmoothPlastic end end end)
+
+local Tab = Window:NewTab("Sombras")
+local Section = Tab:NewSection("Sombras")
+
+Section:NewButton("Ativar Sombras", "ativar sombras", function()
+    local Lighting = game:GetService("Lighting")
+    Lighting.GlobalShadows = true
+    print("Sombras ativadas!")
+end)
+
+Section:NewButton("Desativar Sombras", "desativar sombras", function()
+    local Lighting = game:GetService("Lighting")
+    Lighting.GlobalShadows = false
+    print("Sombras desativadas!")
+end)
 
 local Tab = Window:NewTab("Aimbot") local Section = Tab:NewSection("Aimbot")
 
