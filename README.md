@@ -272,8 +272,8 @@ if sky then
     sky.StarCount = 0
 end end)
 
-local Tab = Window:NewTab("Textura")
-local Section = Tab:NewSection("Textura")
+local Tab = Window:NewTab("Remover textura")
+local Section = Tab:NewSection("Remover Textura")
 
 Section:NewButton("Remover Textura", "remover textura", function() for i,v in next, (workspace:GetDescendants()) do if v:IsA("Part") then v.Material = Enum.Material.SmoothPlastic end end end)
 
