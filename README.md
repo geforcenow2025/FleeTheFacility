@@ -232,6 +232,26 @@ if sky then
     sky.StarCount = 0
 end end)
 
+Section:NewButton("Fog Preto", "fog preto", function() local lighting = game:GetService("Lighting")
+
+local atmosphere = lighting:FindFirstChildOfClass("Atmosphere")
+
+if atmosphere then
+    atmosphere.Color = Color3.fromRGB(0, 0, 0) -- Preto
+    atmosphere.Glare = 0
+    atmosphere.Haze = 10
+    atmosphere.Decay = Color3.fromRGB(0, 0, 0) -- Preto
+    atmosphere.Density = 0.85
+    atmosphere.Offset = 0
+end
+
+local sky = lighting:FindFirstChildOfClass("Sky")
+
+if sky then
+    sky.MoonAngularSize = 10
+    sky.StarCount = 0
+end end)
+
 Section:NewButton("Remove Fog (precisa de calibrador)", "remove fog (precisa de calibrador)", function() local lighting = game:GetService("Lighting")
 
 local atmosphere = lighting:FindFirstChildOfClass("Atmosphere")
