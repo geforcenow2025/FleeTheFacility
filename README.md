@@ -8,14 +8,14 @@ local Window = Fluent:CreateWindow({
 })
 
 local Tab = {
-    ESPs = Window:AddTab({ Title = "ESPs" }),
-    Fog = Window:AddTab({ Title = "Fog" }),
-    Shadow = Window:AddTab({ Title = "Shadow" }),
-    Aimbot = Window:AddTab({ Title = "Aimbot" })
+    ESP = Window:AddTab({ Title = "ESP", Icon = "eye"}),
+    Fog = Window:AddTab({ Title = "Fog", Icon = "cloud-fog"}),
+    Shadow = Window:AddTab({ Title = "Shadow", Icon = "square"}),
+    Aimbot = Window:AddTab({ Title = "Aimbot", Icon = "crosshair"})
 }
 
 -- Player ESP
-local Toggle = Tab.ESPs:AddToggle("Player ESP", 
+local Toggle = Tab.ESP:AddToggle("Player ESP", 
 {
     Title = "Player ESP", 
     Description = "ESP para os players",
@@ -96,7 +96,7 @@ local Toggle = Tab.ESPs:AddToggle("Player ESP",
 })
 
 -- Computer ESP
-Tab.ESPs:AddToggle("Computer ESP", 
+Tab.ESP:AddToggle("Computer ESP", 
 {
     Title = "Computer ESP", 
     Description = "ESP para os computadores",
@@ -131,7 +131,7 @@ Tab.ESPs:AddToggle("Computer ESP",
 })
 
 -- FreezePod ESP
-Tab.ESPs:AddToggle("FreezePod ESP", 
+Tab.ESP:AddToggle("FreezePod ESP", 
 {
     Title = "FreezePod ESP", 
     Description = "ESP para as cápsulas",
@@ -166,7 +166,7 @@ Tab.ESPs:AddToggle("FreezePod ESP",
 })
 
 -- Exit Door ESP
-Tab.ESPs:AddToggle("ExitDoor ESP", 
+Tab.ESP:AddToggle("ExitDoor ESP", 
 {
     Title = "ExitDoor ESP", 
     Description = "ESP para as portas de saídas",
