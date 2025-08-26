@@ -4,7 +4,7 @@ local Window = Fluent:CreateWindow({
     Title = "Flee The Facility",
     TabWidth = 160, 
     Size = UDim2.fromOffset(580, 460),
-    Theme = "Light"
+    Theme = "Darker"
 })
 
 local Tab = {
@@ -377,9 +377,11 @@ ToggleButton.MouseButton1Click:Connect(function()
     end
     
     if UIVisible then
-        ToggleButton.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+        ToggleButton.BackgroundTransparency = 0.3
     else
-        ToggleButton.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        ToggleButton.BackgroundTransparency = 0.3
     end
 end)
 
