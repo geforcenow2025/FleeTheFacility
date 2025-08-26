@@ -329,13 +329,14 @@ ScreenGui.ResetOnSpawn = false
 local ToggleButton = Instance.new("TextButton")
 ToggleButton.Name = "Toggle"
 ToggleButton.Parent = ScreenGui
-ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+ToggleButton.BackgroundTransparency = 0.3
 ToggleButton.BorderSizePixel = 0
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -19)
 ToggleButton.Size = UDim2.new(0, 80, 0, 38)
 ToggleButton.Font = Enum.Font.GothamBold
 ToggleButton.Text = "FTF"
-ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleButton.TextSize = 16
 ToggleButton.Draggable = true
 
