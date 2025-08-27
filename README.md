@@ -1,7 +1,7 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 local Window = Fluent:CreateWindow({
-    Title = "Flee The Facility",
+    Title = "Flee The Facility - Cloud Hub",
     TabWidth = 160, 
     Size = UDim2.fromOffset(580, 460),
     Theme = "Darker"
@@ -14,84 +14,62 @@ local Tab = {
     Aimbot = Window:AddTab({ Title = "Aimbot", Icon = "crosshair"})
 }
 
+-- Variables
+local playertoggle = false
+local pctoggle = false
+
+-- Helper Functions
+local function getBeast()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character and player.Character:FindFirstChild("Hammer") then
+            return player
+        end
+    end
+    return nil
+end
+
+local function reloadESP()
+    -- Placeholder function for ESP reload
+end
+
 -- Player ESP
-local Toggle = Tab.ESP:AddToggle("Player ESP", 
+Tab.ESP:AddToggle("Player ESP", 
 {
     Title = "Player ESP", 
     Description = "ESP para os players",
     Default = false,
     Callback = function(state)
-        if state then
-            local Players = game:GetService("Players")
-            local LocalPlayer = Players.LocalPlayer
-            local BeastPlayer = nil
-
-            local function createHighlight(character, color)
-                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                if humanoidRootPart and character ~= LocalPlayer.Character then
-                    if character:FindFirstChild("Highlight") then
+        playertoggle = state
+        reloadESP()
+        spawn(function()
+            local players = game.Players:GetPlayers()
+            for i=1, #players do
+                if players[i] ~= game.Players.LocalPlayer and players[i].Character ~= nil then
+                    local character = players[i].Character
+                    if character:FindFirstChild("Highlight") and not playertoggle then
                         character.Highlight:Destroy()
                     end
-                    local highlight = Instance.new("Highlight")
-                    highlight.Adornee = character
-                    highlight.Parent = character
-                    highlight.FillTransparency = 1
-                    highlight.OutlineColor = color
-                end
-            end
-
-            local function identifyBeast()
-                for _, player in pairs(Players:GetPlayers()) do
-                    if player ~= LocalPlayer and player.Character then
-                        local hasHammer = player.Character:FindFirstChild("Hammer")
-                        if hasHammer then
-                            BeastPlayer = player
-                            return player
-                        end
+                    if playertoggle and not character:FindFirstChild("Highlight") then
+                        local a = Instance.new("Highlight", character)
+                        a.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        a.FillTransparency = 1 -- Remove o preenchimento, só mostra bordas
+                        a.OutlineColor = Color3.fromRGB(0,130,0) -- verde escuro para bordas
+                        spawn(function()
+                            repeat
+                                wait(0.1)
+                                if players[i] == getBeast() then
+                                    -- Só bordas, sem preenchimento
+                                    a.OutlineColor = Color3.fromRGB(170,0,0) -- vermelho escuro para bordas
+                                else
+                                    -- Só bordas, sem preenchimento
+                                    a.OutlineColor = Color3.fromRGB(0,170,0) -- verde escuro para bordas
+                                end
+                            until character == nil or a == nil or players[i] == nil
+                        end)
                     end
                 end
-                return nil
             end
-
-            local function createPlayerESP(player)
-                if player ~= LocalPlayer and player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
-                    local isBeast = player == BeastPlayer
-                    local color = isBeast and Color3.fromRGB(170, 0, 0) or Color3.fromRGB(0, 170, 0)
-                    createHighlight(player.Character, color)
-                end
-            end
-
-            local function removePlayerESP(player)
-                if player.Character and player.Character:FindFirstChild("Highlight") then
-                    player.Character.Highlight:Destroy()
-                end
-                if player == BeastPlayer then
-                    BeastPlayer = nil
-                end
-            end
-
-            BeastPlayer = identifyBeast()
-
-            for _, player in pairs(Players:GetPlayers()) do
-                createPlayerESP(player)
-            end
-
-            Players.PlayerAdded:Connect(function(player)
-                player.CharacterAdded:Connect(function()
-                    BeastPlayer = identifyBeast()
-                    createPlayerESP(player)
-                end)
-            end)
-
-            Players.PlayerRemoving:Connect(removePlayerESP)
-
-        else
-            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-                if player.Character and player.Character:FindFirstChild("Highlight") then
-                    player.Character.Highlight:Destroy()
-                end
-            end
-        end
+        end)
     end 
 })
 
@@ -102,32 +80,52 @@ Tab.ESP:AddToggle("Computer ESP",
     Description = "ESP para os computadores",
     Default = false,
     Callback = function(state)
-        if state then
-            local function createComputerESP()
-                for _, Pc in pairs(game.Workspace:GetDescendants()) do
-                    if Pc.Name == "ComputerTable" then
-                        if Pc:FindFirstChild("Highlight") then
-                            Pc.Highlight:Destroy()
+        pctoggle = state
+        reloadESP()
+        spawn(function()
+            if game.ReplicatedStorage:FindFirstChild("CurrentMap") and game.ReplicatedStorage.CurrentMap.Value then
+                local map = game.ReplicatedStorage.CurrentMap.Value
+                local mapstuff = map:GetChildren()
+                for i=1,#mapstuff do
+                    if mapstuff[i].Name == "ComputerTable" then
+                        if mapstuff[i]:FindFirstChild("Highlight") and not pctoggle then
+                            mapstuff[i].Highlight:Destroy()
                         end
-
-                        local highlight = Instance.new("Highlight")
-                        highlight.Adornee = Pc
-                        highlight.Parent = Pc
-                        highlight.FillTransparency = 1
-                        highlight.OutlineColor = Color3.fromRGB(0, 0, 130)
+                        if pctoggle and not mapstuff[i]:FindFirstChild("Highlight") then
+                            local a = Instance.new("Highlight", mapstuff[i])
+                            a.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                            a.FillTransparency = 1 -- Remove o preenchimento, só mostra bordas
+                            a.OutlineColor = Color3.fromRGB(0, 0, 130) -- azul escuro inicial
+                            spawn(function()
+                                repeat 
+                                    if mapstuff[i]:FindFirstChild("Screen") then
+                                        local screenColor = mapstuff[i].Screen.Color
+                                        -- Encontra qual componente de cor é o dominante e aplica intensidade 130
+                                        local r, g, b = screenColor.R, screenColor.G, screenColor.B
+                                        local maxVal = math.max(r, g, b)
+                                        
+                                        if maxVal > 0 then
+                                            -- Se for principalmente vermelho
+                                            if r >= g and r >= b then
+                                                a.OutlineColor = Color3.fromRGB(130, 0, 0)
+                                            -- Se for principalmente verde  
+                                            elseif g >= r and g >= b then
+                                                a.OutlineColor = Color3.fromRGB(0, 130, 0)
+                                            -- Se for principalmente azul
+                                            else
+                                                a.OutlineColor = Color3.fromRGB(0, 0, 130)
+                                            end
+                                        end
+                                    end
+                                    wait(1)
+                                until mapstuff[i] == nil or a == nil
+                            end)
+                        end
                     end
                 end
             end
-
-            createComputerESP()
-        else
-            for _, Pc in pairs(game.Workspace:GetDescendants()) do
-                if Pc.Name == "ComputerTable" and Pc:FindFirstChild("Highlight") then
-                    Pc.Highlight:Destroy()
-                end
-            end
-        end
-    end 
+        end)
+    end
 })
 
 -- FreezePod ESP
@@ -149,7 +147,7 @@ Tab.ESP:AddToggle("FreezePod ESP",
                         highlight.Adornee = pod
                         highlight.Parent = pod
                         highlight.FillTransparency = 1
-                        highlight.OutlineColor = Color3.fromRGB(0, 170, 255)
+                        highlight.OutlineColor = Color3.fromRGB(0, 170, 220)
                     end
                 end
             end
@@ -184,7 +182,7 @@ Tab.ESP:AddToggle("ExitDoor ESP",
                         highlight.Adornee = door
                         highlight.Parent = door
                         highlight.FillTransparency = 1
-                        highlight.OutlineColor = Color3.fromRGB(200, 200, 0)
+                        highlight.OutlineColor = Color3.fromRGB(180, 180, 0)
                     end
                 end
             end
