@@ -10,6 +10,7 @@ local Window = Fluent:CreateWindow({
 local Tab = {
     ESP = Window:AddTab({ Title = "ESP", Icon = "eye"}),
     Fog = Window:AddTab({ Title = "Fog", Icon = "cloud-fog"}),
+    Visual = Window:AddTab({ Title = "Visual", Icon = "view"}),
     Shadow = Window:AddTab({ Title = "Shadow", Icon = "square"}),
     Aimbot = Window:AddTab({ Title = "Aimbot", Icon = "crosshair"})
 }
@@ -17,6 +18,9 @@ local Tab = {
 -- Variables
 local playertoggle = false
 local pctoggle = false
+local podstoggle = false
+local exitstoggle = false
+local neverfailtoggle = false
 
 -- Helper Functions
 local function getBeast()
@@ -135,28 +139,18 @@ Tab.ESP:AddToggle("FreezePod ESP",
     Description = "ESP para as cápsulas",
     Default = false,
     Callback = function(state)
-        if state then
-            local function createPodsESP()
-                for _, pod in pairs(game.Workspace:GetDescendants()) do
-                    if pod.Name == "FreezePod" then
-                        if pod:FindFirstChild("Highlight") then
-                            pod.Highlight:Destroy()
-                        end
-
-                        local highlight = Instance.new("Highlight")
-                        highlight.Adornee = pod
-                        highlight.Parent = pod
-                        highlight.FillTransparency = 1
-                        highlight.OutlineColor = Color3.fromRGB(0, 170, 220)
-                    end
+        podstoggle = state
+        local mapstuff = game.Workspace:GetDescendants()
+        for i = 1, #mapstuff do
+            if mapstuff[i].Name == "FreezePod" then
+                if mapstuff[i]:findFirstChild("Highlight") and not podstoggle then
+                    mapstuff[i].Highlight:remove()
                 end
-            end
-
-            createPodsESP()
-        else
-            for _, pod in pairs(game.Workspace:GetDescendants()) do
-                if pod.Name == "FreezePod" and pod:FindFirstChild("Highlight") then
-                    pod.Highlight:Destroy()
+                if podstoggle and not mapstuff[i]:findFirstChild("Highlight") then
+                    local a = Instance.new("Highlight", mapstuff[i])
+                    a.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    a.FillTransparency = 1
+                    a.OutlineColor = Color3.fromRGB(0,170,220)
                 end
             end
         end
@@ -170,28 +164,18 @@ Tab.ESP:AddToggle("ExitDoor ESP",
     Description = "ESP para as portas de saídas",
     Default = false,
     Callback = function(state)
-        if state then
-            local function createExitDoorESP()
-                for _, door in pairs(game.Workspace:GetDescendants()) do
-                    if door.Name == "ExitDoor" then
-                        if door:FindFirstChild("Highlight") then
-                            door.Highlight:Destroy()
-                        end
-
-                        local highlight = Instance.new("Highlight")
-                        highlight.Adornee = door
-                        highlight.Parent = door
-                        highlight.FillTransparency = 1
-                        highlight.OutlineColor = Color3.fromRGB(180, 180, 0)
-                    end
+        exitstoggle = state
+        local mapstuff = game.Workspace:GetDescendants()
+        for i = 1, #mapstuff do
+            if mapstuff[i].Name == "ExitDoor" then
+                if mapstuff[i]:findFirstChild("Highlight") and not exitstoggle then
+                    mapstuff[i].Highlight:remove()
                 end
-            end
-
-            createExitDoorESP()
-        else
-            for _, door in pairs(game.Workspace:GetDescendants()) do
-                if door.Name == "ExitDoor" and door:FindFirstChild("Highlight") then
-                    door.Highlight:Destroy()
+                if exitstoggle and not mapstuff[i]:findFirstChild("Highlight") then
+                    local a = Instance.new("Highlight", mapstuff[i])
+                    a.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    a.FillTransparency = 1
+                    a.OutlineColor = Color3.fromRGB(180,180,0)
                 end
             end
         end
@@ -291,6 +275,32 @@ Tab.Fog:AddButton({
     end 
 })
 
+-- Never Fail Hacking
+Tab.Visual:AddToggle("Never Fail Hacking", {
+    Title = "Never Fail Hacking", 
+    Description = "Serve pra nunca errar os PCS",
+    Default = false,
+    Callback = function(state)
+        if state then
+            neverfailtoggle = true
+            spawn(function()
+                local mt = getrawmetatable(game)
+                local old = mt.__namecall
+                setreadonly(mt,false)
+                mt.__namecall = newcclosure(function(self, ...)
+                    local args = {...}
+                    if getnamecallmethod() == 'FireServer' and args[1] == 'SetPlayerMinigameResult' and neverfailtoggle then
+                        args[2] = true
+                    end
+                    return old(self, unpack(args))
+                end)
+            end)
+        else
+            neverfailtoggle = false
+        end
+    end 
+})
+
 -- Shadow Tab
 Tab.Shadow:AddButton({ 
     Title = "Ativar Sombras", 
@@ -310,7 +320,7 @@ Tab.Shadow:AddButton({
 
 -- Aimbot Tab
 Tab.Aimbot:AddButton({ 
-    Title = "Aimbot (serve para a mira grudar no sobrevivente)", 
+    Title = "Aimbot (serve pra a mira grudar no sobrevivente)", 
     Callback = function() 
         loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Camlock-mobile-da-hood-20401"))()
     end 
