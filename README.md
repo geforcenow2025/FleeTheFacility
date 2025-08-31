@@ -114,7 +114,7 @@ Tab.ESP:AddToggle("Computer ESP",
                                                 a.OutlineColor = Color3.fromRGB(130, 0, 0)
                                             -- Se for principalmente verde  
                                             elseif g >= r and g >= b then
-                                                a.OutlineColor = Color3.fromRGB(0, 130, 0)
+                                                a.OutlineColor = Color3.fromRGB(0, 80, 0)
                                             -- Se for principalmente azul
                                             else
                                                 a.OutlineColor = Color3.fromRGB(0, 0, 130)
@@ -253,7 +253,7 @@ Tab.Fog:AddButton({
 })
 
 Tab.Fog:AddButton({ 
-    Title = "Remove Fog (remove a neblina inteiro do mapa)", 
+    Title = "Remove Fog (remove a neblina inteira do mapa)", 
     Callback = function() 
         local lighting = game:GetService("Lighting")
         local atmosphere = lighting:FindFirstChildOfClass("Atmosphere")
