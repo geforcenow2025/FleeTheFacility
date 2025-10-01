@@ -211,9 +211,9 @@ Tab.ESP:AddToggle("Door ESP",
                             if highlight and door:FindFirstChild("DoorTrigger") then
                                 if door.DoorTrigger:FindFirstChild("ActionSign") then
                                     if door.DoorTrigger.ActionSign.Value == 11 then
-                                        highlight.FillColor = Color3.fromRGB(0, 50, 0)
+                                        highlight.FillColor = Color3.fromRGB(0, 80, 0)
                                     elseif door.DoorTrigger.ActionSign.Value == 10 then
-                                        highlight.FillColor = Color3.fromRGB(50, 0, 0)
+                                        highlight.FillColor = Color3.fromRGB(80, 0, 0)
                                     end
                                 end
                             end
