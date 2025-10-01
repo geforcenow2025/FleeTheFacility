@@ -205,15 +205,15 @@ Tab.ESP:AddToggle("Door ESP",
                                 highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                                 highlight.FillTransparency = 0
                                 highlight.OutlineTransparency = 0
-                                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                                highlight.OutlineColor = Color3.fromRGB(180, 180, 180)
                             end
                             local highlight = door:FindFirstChild("Highlight")
                             if highlight and door:FindFirstChild("DoorTrigger") then
                                 if door.DoorTrigger:FindFirstChild("ActionSign") then
                                     if door.DoorTrigger.ActionSign.Value == 11 then
-                                        highlight.FillColor = Color3.fromRGB(0, 255, 0)
+                                        highlight.FillColor = Color3.fromRGB(0, 50, 0)
                                     elseif door.DoorTrigger.ActionSign.Value == 10 then
-                                        highlight.FillColor = Color3.fromRGB(255, 0, 0)
+                                        highlight.FillColor = Color3.fromRGB(50, 0, 0)
                                     end
                                 end
                             end
