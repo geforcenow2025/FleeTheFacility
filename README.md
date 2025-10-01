@@ -20,6 +20,7 @@ local playertoggle = false
 local pctoggle = false
 local podstoggle = false
 local exitstoggle = false
+local doortoggle = false
 local neverfailtoggle = false
 
 -- Helper Functions
@@ -178,6 +179,56 @@ Tab.ESP:AddToggle("ExitDoor ESP",
                     a.OutlineColor = Color3.fromRGB(180,180,0)
                 end
             end
+        end
+    end 
+})
+
+-- Door ESP
+Tab.ESP:AddToggle("Door ESP", 
+{
+    Title = "Door ESP", 
+    Description = "ESP para as portas",
+    Default = false,
+    Callback = function(state)
+        doortoggle = state
+        
+        if doortoggle then
+            spawn(function()
+                repeat
+                    wait(0.5)
+                    for _, door in pairs(workspace:GetDescendants()) do
+                        if door.Name == "SingleDoor" or door.Name == "DoubleDoor" then
+                            if not door:FindFirstChild("Highlight") then
+                                local highlight = Instance.new("Highlight")
+                                highlight.Parent = door
+                                highlight.Adornee = door
+                                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                                highlight.FillTransparency = 1
+                                highlight.OutlineTransparency = 0
+                            end
+                            local highlight = door:FindFirstChild("Highlight")
+                            if highlight and door:FindFirstChild("DoorTrigger") then
+                                if door.DoorTrigger:FindFirstChild("ActionSign") then
+                                    if door.DoorTrigger.ActionSign.Value == 11 then
+                                        highlight.OutlineColor = Color3.fromRGB(0, 255, 0)
+                                    elseif door.DoorTrigger.ActionSign.Value == 10 then
+                                        highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                until not doortoggle
+                
+                -- Remove todos os highlights quando desativa
+                for _, door in pairs(workspace:GetDescendants()) do
+                    if door.Name == "SingleDoor" or door.Name == "DoubleDoor" then
+                        if door:FindFirstChild("Highlight") then
+                            door.Highlight:Destroy()
+                        end
+                    end
+                end
+            end)
         end
     end 
 })
