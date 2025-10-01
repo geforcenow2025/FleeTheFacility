@@ -358,7 +358,7 @@ Tab.Visual:AddButton({
     Title = "Tempo que o sobrevivente vai levantar", 
     Callback = function() 
         loadstring(game:HttpGet("https://raw.githubusercontent.com/cannaava/GetUpTimerv5/refs/heads/main/cannaava"))()
-    end 
+    end
 })
 
 -- Shadow Tab
