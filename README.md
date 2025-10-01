@@ -203,16 +203,17 @@ Tab.ESP:AddToggle("Door ESP",
                                 highlight.Parent = door
                                 highlight.Adornee = door
                                 highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                                highlight.FillTransparency = 1
+                                highlight.FillTransparency = 0
                                 highlight.OutlineTransparency = 0
+                                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
                             end
                             local highlight = door:FindFirstChild("Highlight")
                             if highlight and door:FindFirstChild("DoorTrigger") then
                                 if door.DoorTrigger:FindFirstChild("ActionSign") then
                                     if door.DoorTrigger.ActionSign.Value == 11 then
-                                        highlight.OutlineColor = Color3.fromRGB(0, 255, 0)
+                                        highlight.FillColor = Color3.fromRGB(0, 255, 0)
                                     elseif door.DoorTrigger.ActionSign.Value == 10 then
-                                        highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+                                        highlight.FillColor = Color3.fromRGB(255, 0, 0)
                                     end
                                 end
                             end
@@ -349,6 +350,14 @@ Tab.Visual:AddToggle("Never Fail Hacking", {
         else
             neverfailtoggle = false
         end
+    end 
+})
+
+-- Tempo que o sobrevivente vai levantar
+Tab.Visual:AddButton({ 
+    Title = "Tempo que o sobrevivente vai levantar", 
+    Callback = function() 
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/cannaava/GetUpTimerv5/refs/heads/main/cannaava"))()
     end 
 })
 
