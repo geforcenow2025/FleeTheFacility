@@ -203,7 +203,7 @@ Tab.ESP:AddToggle("Door ESP",
                                 highlight.Parent = door
                                 highlight.Adornee = door
                                 highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                                highlight.FillTransparency = 0
+                                highlight.FillTransparency = 0.3
                                 highlight.OutlineTransparency = 0
                                 highlight.OutlineColor = Color3.fromRGB(180, 180, 180)
                             end
