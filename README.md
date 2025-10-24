@@ -23,6 +23,9 @@ local podstoggle = false
 local exitstoggle = false
 local doortoggle = false
 local neverfailtoggle = false
+local infinitejumptoggle = false
+local infinitejumpconnection = nil
+local hitboxToggle = false
 
 -- Helper Functions
 local function getBeast()
@@ -58,17 +61,15 @@ Tab.ESP:AddToggle("Player ESP",
                     if playertoggle and not character:FindFirstChild("Highlight") then
                         local a = Instance.new("Highlight", character)
                         a.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                        a.FillTransparency = 1 -- Remove o preenchimento, só mostra bordas
-                        a.OutlineColor = Color3.fromRGB(0,130,0) -- verde escuro para bordas
+                        a.FillTransparency = 1
+                        a.OutlineColor = Color3.fromRGB(0,130,0)
                         spawn(function()
                             repeat
                                 wait(0.1)
                                 if players[i] == getBeast() then
-                                    -- Só bordas, sem preenchimento
-                                    a.OutlineColor = Color3.fromRGB(170,0,0) -- vermelho escuro para bordas
+                                    a.OutlineColor = Color3.fromRGB(170,0,0)
                                 else
-                                    -- Só bordas, sem preenchimento
-                                    a.OutlineColor = Color3.fromRGB(0,170,0) -- verde escuro para bordas
+                                    a.OutlineColor = Color3.fromRGB(0,170,0)
                                 end
                             until character == nil or a == nil or players[i] == nil
                         end)
@@ -100,24 +101,20 @@ Tab.ESP:AddToggle("Computer ESP",
                         if pctoggle and not mapstuff[i]:FindFirstChild("Highlight") then
                             local a = Instance.new("Highlight", mapstuff[i])
                             a.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                            a.FillTransparency = 1 -- Remove o preenchimento, só mostra bordas
-                            a.OutlineColor = Color3.fromRGB(0, 0, 130) -- azul escuro inicial
+                            a.FillTransparency = 1
+                            a.OutlineColor = Color3.fromRGB(0, 0, 130)
                             spawn(function()
                                 repeat 
                                     if mapstuff[i]:FindFirstChild("Screen") then
                                         local screenColor = mapstuff[i].Screen.Color
-                                        -- Encontra qual componente de cor é o dominante e aplica intensidade 130
                                         local r, g, b = screenColor.R, screenColor.G, screenColor.B
                                         local maxVal = math.max(r, g, b)
                                         
                                         if maxVal > 0 then
-                                            -- Se for principalmente vermelho
                                             if r >= g and r >= b then
                                                 a.OutlineColor = Color3.fromRGB(130, 0, 0)
-                                            -- Se for principalmente verde  
                                             elseif g >= r and g >= b then
                                                 a.OutlineColor = Color3.fromRGB(0, 130, 0)
-                                            -- Se for principalmente azul
                                             else
                                                 a.OutlineColor = Color3.fromRGB(0, 0, 130)
                                             end
@@ -194,10 +191,8 @@ Tab.ESP:AddToggle("Door ESP",
         doortoggle = state
         
         if doortoggle then
-            -- Cache das portas para não buscar sempre
             local cachedDoors = {}
             
-            -- Busca portas uma vez
             for _, door in pairs(workspace:GetDescendants()) do
                 if door.Name == "SingleDoor" or door.Name == "DoubleDoor" then
                     table.insert(cachedDoors, door)
@@ -234,7 +229,6 @@ Tab.ESP:AddToggle("Door ESP",
                     end
                 until not doortoggle
                 
-                -- Remove todos os highlights quando desativa
                 for _, door in pairs(cachedDoors) do
                     if door and door:FindFirstChild("Highlight") then
                         door.Highlight:Destroy()
@@ -374,7 +368,6 @@ Tab.Universal:AddToggle("Inf Jump",
         infinitejumptoggle = state
         
         if infinitejumptoggle then
-            -- Conecta o evento de pulo
             infinitejumpconnection = game:GetService("UserInputService").JumpRequest:Connect(function()
                 if infinitejumptoggle then
                     local player = game.Players.LocalPlayer
@@ -384,7 +377,6 @@ Tab.Universal:AddToggle("Inf Jump",
                 end
             end)
         else
-            -- Desconecta o evento quando desativado
             if infinitejumpconnection then
                 infinitejumpconnection:Disconnect()
                 infinitejumpconnection = nil
@@ -417,7 +409,6 @@ Tab.Aimbot:AddToggle("Aimbot", {
     Default = false,
     Callback = function(state)
         if state then
-            -- Variáveis principais
             local Players = game:GetService("Players")
             local UserInputService = game:GetService("UserInputService")
             local RunService = game:GetService("RunService")
@@ -430,13 +421,11 @@ Tab.Aimbot:AddToggle("Aimbot", {
             _G.KeyConnection = nil
             _G.PlayerRemovingConnection = nil
 
-            -- Destruir GUI existente se houver
             local existingGui = LocalPlayer.PlayerGui:FindFirstChild("CamlockToggle")
             if existingGui then
                 existingGui:Destroy()
             end
 
-            -- Criar Toggle GUI (estilo FTF)
             local ScreenGui = Instance.new("ScreenGui")
             ScreenGui.Name = "CamlockToggle"
             ScreenGui.ResetOnSpawn = false
@@ -445,7 +434,7 @@ Tab.Aimbot:AddToggle("Aimbot", {
             local ToggleButton = Instance.new("TextButton")
             ToggleButton.Name = "Toggle"
             ToggleButton.Parent = ScreenGui
-            ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50) -- Vermelho (OFF)
+            ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
             ToggleButton.BackgroundTransparency = 0.3
             ToggleButton.BorderSizePixel = 0
             ToggleButton.Position = UDim2.new(0, 10, 0.5, -19)
@@ -461,7 +450,6 @@ Tab.Aimbot:AddToggle("Aimbot", {
             Corner.CornerRadius = UDim.new(0, 8)
             Corner.Parent = ToggleButton
 
-            -- Função para parar camlock
             local function stopCamlock()
                 if _G.CamlockConnection then
                     _G.CamlockConnection:Disconnect()
@@ -470,12 +458,12 @@ Tab.Aimbot:AddToggle("Aimbot", {
                 _G.CamlockTarget = nil
                 _G.CamlockActive = false
                 
-                -- Atualizar toggle para OFF (vermelho)
-                ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-                ToggleButton.Text = "OFF"
+                if ToggleButton and ToggleButton.Parent then
+                    ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+                    ToggleButton.Text = "OFF"
+                end
             end
 
-            -- Função para iniciar camlock
             local function startCamlock()
                 if _G.CamlockConnection then
                     _G.CamlockConnection:Disconnect()
@@ -486,20 +474,18 @@ Tab.Aimbot:AddToggle("Aimbot", {
                 _G.CamlockConnection = RunService.RenderStepped:Connect(function()
                     if _G.CamlockTarget and _G.CamlockTarget.Character and _G.CamlockTarget.Character:FindFirstChild("Head") then
                         local head = _G.CamlockTarget.Character.Head
-                        
-                        -- Camlock direto (sem suavidade, igual aimbot)
                         Camera.CFrame = CFrame.new(Camera.CFrame.Position, head.Position)
                     else
                         stopCamlock()
                     end
                 end)
                 
-                -- Atualizar toggle para ON (verde)
-                ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-                ToggleButton.Text = "ON"
+                if ToggleButton and ToggleButton.Parent then
+                    ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+                    ToggleButton.Text = "ON"
+                end
             end
 
-            -- Função para limpar tudo
             local function cleanupAll()
                 stopCamlock()
                 
@@ -512,23 +498,20 @@ Tab.Aimbot:AddToggle("Aimbot", {
                     _G.PlayerRemovingConnection = nil
                 end
                 
-                if ScreenGui then
+                if ScreenGui and ScreenGui.Parent then
                     ScreenGui:Destroy()
                 end
             end
 
-            -- Detectar tecla F (para PC)
             _G.KeyConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
                 if gameProcessed then return end
                 
                 if input.KeyCode == Enum.KeyCode.F then
-                    -- Se já está ativo, desativa
                     if _G.CamlockActive then
                         stopCamlock()
                         return
                     end
                     
-                    -- Senão, encontrar jogador mais próximo do centro da tela
                     local closestPlayer = nil
                     local shortestDistance = math.huge
                     local screenCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
@@ -555,9 +538,7 @@ Tab.Aimbot:AddToggle("Aimbot", {
                 end
             end)
 
-            -- Clique no botão toggle
             ToggleButton.MouseButton1Click:Connect(function()
-                -- Animação de clique
                 ToggleButton:TweenSize(
                     UDim2.new(0, 75, 0, 35),
                     Enum.EasingDirection.Out,
@@ -577,7 +558,6 @@ Tab.Aimbot:AddToggle("Aimbot", {
                 if _G.CamlockActive then
                     stopCamlock()
                 else
-                    -- Encontrar jogador mais próximo
                     local closestPlayer = nil
                     local shortestDistance = math.huge
                     local screenCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
@@ -604,37 +584,36 @@ Tab.Aimbot:AddToggle("Aimbot", {
                 end
             end)
 
-            -- Detectar quando jogadores saem
             _G.PlayerRemovingConnection = Players.PlayerRemoving:Connect(function(player)
                 if player == _G.CamlockTarget then
                     stopCamlock()
                 end
             end)
 
-            -- NOVO: Monitorar quando a GUI principal (Window) for fechada
-            spawn(function()
-                while Window and Window.Root and Window.Root.Parent do
-                    wait(0.1)
-                end
-                -- GUI principal foi fechada, limpar tudo
+            task.spawn(function()
+                repeat
+                    task.wait(0.5)
+                until not Window or not Window.Root or not Window.Root.Parent
                 cleanupAll()
             end)
 
-            -- NOVO: Monitorar se a ScreenGui principal foi destruída
-            spawn(function()
-                local FluentGui = game.Players.LocalPlayer.PlayerGui:WaitForChild("ScreenGui", 5)
+            task.spawn(function()
+                local FluentGui = LocalPlayer.PlayerGui:WaitForChild("ScreenGui", 10)
                 if FluentGui then
-                    FluentGui.AncestryChanged:Connect(function()
+                    local connection
+                    connection = FluentGui.AncestryChanged:Connect(function()
                         if not FluentGui.Parent then
-                            wait(0.1)
+                            task.wait(0.1)
                             cleanupAll()
+                            if connection then
+                                connection:Disconnect()
+                            end
                         end
                     end)
                 end
             end)
 
         else
-            -- Desativar tudo
             if _G.CamlockConnection then
                 _G.CamlockConnection:Disconnect()
                 _G.CamlockConnection = nil
@@ -667,7 +646,6 @@ Tab.Aimbot:AddToggle("Hitbox Expander", {
     Callback = function(state)
         hitboxToggle = state
         
-        -- Tabela para armazenar tamanhos e transparências originais
         if not _G.originalSizes then
             _G.originalSizes = {}
         end
@@ -683,7 +661,6 @@ Tab.Aimbot:AddToggle("Hitbox Expander", {
                     local partKey = character.Name .. "_" .. partName
                     
                     if hitboxToggle then
-                        -- Salva tamanho e transparência originais antes de modificar
                         if not _G.originalSizes[partKey] then
                             _G.originalSizes[partKey] = {
                                 Size = part.Size,
@@ -692,18 +669,15 @@ Tab.Aimbot:AddToggle("Hitbox Expander", {
                             }
                         end
                         
-                        -- Expande a hitbox
                         part.Size = Vector3.new(5, 5, 5)
                         part.Transparency = 0.4
                         part.CanCollide = false
                     else
-                        -- Restaura valores originais salvos
                         if _G.originalSizes[partKey] then
                             part.Size = _G.originalSizes[partKey].Size
                             part.Transparency = _G.originalSizes[partKey].Transparency
                             part.CanCollide = _G.originalSizes[partKey].CanCollide
                             
-                            -- Limpa da memória após restaurar
                             _G.originalSizes[partKey] = nil
                         end
                     end
@@ -711,7 +685,6 @@ Tab.Aimbot:AddToggle("Hitbox Expander", {
             end
         end
         
-        -- Aplica em todos os players existentes
         spawn(function()
             local players = game.Players:GetPlayers()
             for i = 1, #players do
@@ -721,7 +694,6 @@ Tab.Aimbot:AddToggle("Hitbox Expander", {
             end
         end)
         
-        -- Monitora novos players (só conecta uma vez)
         if hitboxToggle and not _G.hitboxConnections then
             _G.hitboxConnections = {}
             
@@ -734,7 +706,6 @@ Tab.Aimbot:AddToggle("Hitbox Expander", {
                 end)
             end)
         elseif not hitboxToggle and _G.hitboxConnections then
-            -- Desconecta eventos quando desativa
             for _, connection in pairs(_G.hitboxConnections) do
                 if typeof(connection) == "RBXScriptConnection" then
                     connection:Disconnect()
@@ -745,8 +716,8 @@ Tab.Aimbot:AddToggle("Hitbox Expander", {
     end 
 })
 
--- TOGGLE BUTTON
-wait(1)
+-- TOGGLE BUTTON (espera a Window estar pronta)
+task.wait(1)
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "FTFToggle"
@@ -814,25 +785,29 @@ ToggleButton.MouseButton1Click:Connect(function()
 end)
 
 local function removeToggleButton()
-    if ScreenGui then
+    if ScreenGui and ScreenGui.Parent then
         ScreenGui:Destroy()
     end
 end
 
-spawn(function()
-    while Window and Window.Root and Window.Root.Parent do
-        wait(0.1)
-    end
+task.spawn(function()
+    repeat
+        task.wait(0.5)
+    until not Window or not Window.Root or not Window.Root.Parent
     removeToggleButton()
 end)
 
-spawn(function()
-    local FluentGui = game.Players.LocalPlayer.PlayerGui:WaitForChild("ScreenGui", 5)
+task.spawn(function()
+    local FluentGui = game.Players.LocalPlayer.PlayerGui:WaitForChild("ScreenGui", 10)
     if FluentGui then
-        FluentGui.AncestryChanged:Connect(function()
+        local connection
+        connection = FluentGui.AncestryChanged:Connect(function()
             if not FluentGui.Parent then
-                wait(0.1)
+                task.wait(0.1)
                 removeToggleButton()
+                if connection then
+                    connection:Disconnect()
+                end
             end
         end)
     end
